@@ -1,1 +1,237 @@
-How you can use propel ORM in core php project 
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="How we can use Propel ORM in Core php : Core php Propel" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>How we can use Propel ORM in Core php</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/bineetchaubey">View on GitHub</a>
+
+          <h1 id="project_title">How we can use Propel ORM in Core php</h1>
+          <h2 id="project_tagline">Core php Propel</h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <ol>
+<li> Download  propel   in zip file</li>
+<li> unzip   in projecy/vendor folder </li>
+<li>
+<p>cretae a  build.propertiese file  with </p>
+
+<p>propel.home =  .
+ propel.project = 
+ propel.database = 
+ propel.database.url = mysql:host=127.0.0.1;dbname=
+ propel.databse.user = root
+propel.database.password= </p>
+
+<h1>
+<a name="for--runtime--configuration" class="anchor" href="#for--runtime--configuration"><span class="octicon octicon-link"></span></a>for  runtime  configuration</h1>
+
+<p>propel.runtime.conf.file= runtime-conf.xml
+   propel.runtime.phpconf.file = </p>
+
+<p>install  pear</p>
+
+<pre><code>1. install pear 
+</code></pre>
+</li>
+<li> pear channel-discover   pear.phing.info</li>
+<li> pear install phing/phing</li>
+<li>
+<p>pear install log</p>
+
+<p>for global installation   use  following command </p>
+
+<p>pear channel-discover pear.propelorm.org
+pear  install -a propel/propel-genetrator
+pear install -a propel/propel-runtime</p>
+
+<p>then create a database  and  run comand   to genarate   a schema.xml
+file  from existing database.</p>
+</li>
+</ol><h1>
+<a name="if-you-have-install--global-configaration-then--you-can-use-propel-gen-command---from-any-where" class="anchor" href="#if-you-have-install--global-configaration-then--you-can-use-propel-gen-command---from-any-where"><span class="octicon octicon-link"></span></a>if you have install  global configaration then  you can use propel-gen command   from any where</h1>
+
+<p>if not then  use </p>
+
+<p>-&gt; project directry &gt;     propel-gen . Reverse</p>
+
+<h1>
+<a name="above--comand-cretae--a-schemaxml-file-on-root-directry" class="anchor" href="#above--comand-cretae--a-schemaxml-file-on-root-directry"><span class="octicon octicon-link"></span></a>above  comand cretae  a schema.xml file on root directry</h1>
+
+<p>Then  run</p>
+
+<p>project directry &gt; /path/to/genaraaterfile/  propel-gen om</p>
+
+<p># above command certae a  build folder    and  all  model  classs  within it </p>
+
+<p>#then run 
+  propel-gen   sql   //  foe ccreta  a sqlfile generator    for schema.xml file</p>
+
+<p>#create  a   runtime  config xml file  </p>
+
+<p>create a     runtime-conf.xml file  in buld/conf/ file  </p>
+
+<p>root lavel   </p>
+
+<p>runtime-conf.xml   file  content </p>
+
+<p>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</p>
+
+<p></p>
+
+<p>&lt;!-- Uncomment this if you have PEAR Log installed</p>
+
+<p></p>
+
+<pre><code>&lt;type&gt;file&lt;/type&gt;
+
+&lt;name&gt;/path/to/propel.log&lt;/name&gt;
+
+&lt;ident&gt;propel-bookstore&lt;/ident&gt;
+
+&lt;level&gt;7&lt;/level&gt;
+</code></pre>
+
+<p></p>
+
+<p>--&gt;</p>
+
+<p></p>
+
+<pre><code>&lt;datasources default="bookstore"&gt;
+
+  &lt;datasource id="bookstore"&gt;
+
+    &lt;adapter&gt;mysql&lt;/adapter&gt; &lt;!-- sqlite, mysql, mssql, oracle, or pgsql --&gt;
+
+    &lt;connection&gt;
+
+      &lt;dsn&gt;mysql:host=localhost;dbname=my_db_name&lt;/dsn&gt;
+
+      &lt;user&gt;my_db_user&lt;/user&gt;
+
+      &lt;password&gt;my_db_password&lt;/password&gt;
+
+    &lt;/connection&gt;
+
+  &lt;/datasource&gt;
+
+&lt;/datasources&gt;
+</code></pre>
+
+<p></p>
+
+<p></p>
+
+<p>Notice how the id attribute of the  tag matches the connection name defined in the  tag of theschema.xml. This is how Propel maps a database description to a connection.
+Replace the  and the  settings with the ones of your database.</p>
+
+<p>Then run a   comand   </p>
+
+<blockquote>
+<p>Propel-gen   convert-conf </p>
+</blockquote>
+
+<p>above  command      create  a    runtime  config file   on  build /conf/propel-conf.xml  file  </p>
+
+<p>#  propel-conf.xml     </p>
+
+<p>Now  use  all  model  in your    application  </p>
+
+<p>create  a setting page   just like this </p>
+
+<p>setting.php file content</p>
+
+<p>require-one  'path/to/propel/runtime/lib/propel.php';
+   propel::init('path/to/prople/buid/conf/propel-conf.xml' );
+  set_include_path(“path/to/bostartao/build/class”.PATH_SAPERATER.get_include_path());</p>
+
+<p>include  above  file  in your    php page and then   </p>
+
+<p>use   propel  object model  to generate   query  see propel  doc  page.</p>
+
+<p>Note  -  </p>
+
+<p>if you are going to make a change in schema file and add more table and relation and want to migrate  table and create model   the you need to do follow following step</p>
+
+<ol>
+<li>first make change in  schema.xml file </li>
+</ol><p>2 Then create a buildtime-conf.xml file same directry as runtime-conf.xml and content have also same such as (runtime-conf.xml)</p>
+
+<pre><code> 3.  then run &gt;  propel-gen diff
+</code></pre>
+
+<p>== this will create  migration class in build/migration/ folder    like class migartion_XXXX</p>
+
+<ol>
+<li> Then run &gt; propel-gen migrate</li>
+</ol><p>This will  modify  database with new column or table.</p>
+
+<p>Now again  excute  command  for create  model  class  new and modify</p>
+
+<ol>
+<li> &gt; prople-gen om</li>
+</ol><p>this will create  all update model class in bulid folder</p>
+
+<p>Excute last  command  fot make run time configuration  in  build/conf  folder</p>
+
+<p>6&gt; propel-gen  convert-conf </p>
+
+<p>above  command update  “run time class map” file in   build/conf  folder</p>
+
+<p>Note   :: 
+       in   shcema file  foreignkey refrence only define in foreign  table  not in  primary key table</p>
+
+<p>User  -&gt;  one to many  Post
+   Post  -&gt; many to one User</p>
+
+<p>then we need   only  define   foreign-key  in Post  table   not need  to  define this  in  user table</p>
+
+<p>User table have automatic  bound relation to  post  with has many . </p>
+
+<p>If you also define  foreign key in user table  then this relation will become  one to one on both side</p>
+
+<p>for  example </p>
+
+<pre><code>    &lt;table  name =”user” &gt;
+    &lt;column  ..&gt;
+  &lt;/table&gt;
+
+  &lt;table  name= “post” &gt;
+     &lt;column  ..&gt;
+   &lt;foreign-key foreignTable = "user" name = "user_post" phpName = "Writer"&gt; 
+     &lt;reference local="user_id" foreign="id" /&gt; 
+    &lt;/foreign-key&gt;
+  &lt;/table&gt;
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>

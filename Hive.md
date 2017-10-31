@@ -1,4 +1,9 @@
-file1.txt 
+# Hive tutorial
+
+###### file1.txt
+
+id | name | sallary | date
+-- | ---- | ------- | --
 1|abc|23232323|2016-01-01
 2|abc|23232323|2016-01-01
 3|abc|2334523|2016-01-01
@@ -6,7 +11,10 @@ file1.txt
 5|abc|24587323|2016-01-01
 6|abc|2334873|2016-01-01
 
-file2.txt 
+
+###### file2.txt
+id | name | sallary | date
+-- | ---- | ------- | --
 11|abc|23232323|2016-01-02
 12|xyz|23234323|2016-01-02
 13|abd|23234323|2016-01-02
@@ -14,22 +22,15 @@ file2.txt
 15|abt|23342343|2016-01-02
 
 
+    hive> create table ext_tab ( id int, name string, salary int, date_today date ) partitioned by ( creation_date date) row format delimited fields terminated by '|' ; 
+    hive>  load data local inpath '/home/hadoop/a/file1.txt'  into table ext_tab partition (creation_date="2016-01-01");
+    hive> load data local inpath '/home/hadoop/a/file2.txt'  into table ext_tab partition (creation_date="2016-01-02"); 
 
-
-
-
-
-hive> create table ext_tab ( id int, name string, salary int, date_today date ) partitioned by ( creation_date date) row format delimited fields terminated by '|' ; 
-hive>  load data local inpath '/home/hadoop/a/file1.txt'  into table ext_tab partition (creation_date="2016-01-01");
-hive> load data local inpath '/home/hadoop/a/file2.txt'  into table ext_tab partition (creation_date="2016-01-02"); 
-n
 === emp ===
 
 
-create table dyn_emp( id int, fname string,lname string,email string,  gender string, address string, salary int, dept string ) partitioned by (dept_dy string) row format delimited fields terminated by '|' ;
-
-
-insert into table dyn_emp partition(dept_dy) select id, fname,lname,email,gender,address,salary, dept, dept as dyn_emp from  emp;
+    hive> create table dyn_emp( id int, fname string,lname string,email string,  gender string, address string, salary int, dept string ) partitioned by (dept_dy string) row format delimited fields terminated by '|' ;
+    hive> insert into table dyn_emp partition(dept_dy) select id, fname,lname,email,gender,address,salary, dept, dept as dyn_emp from  emp;
 
 
 ###insert into table tab_test partition(name_par) select id, name, salary, date_today, name as name_par from ext_tab;

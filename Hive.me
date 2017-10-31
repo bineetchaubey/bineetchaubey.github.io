@@ -1,0 +1,244 @@
+file1.txt 
+1|abc|23232323|2016-01-01
+2|abc|23232323|2016-01-01
+3|abc|2334523|2016-01-01
+4|abc|23545323|2016-01-01
+5|abc|24587323|2016-01-01
+6|abc|2334873|2016-01-01
+
+file2.txt 
+11|abc|23232323|2016-01-02
+12|xyz|23234323|2016-01-02
+13|abd|23234323|2016-01-02
+14|abr|22332323|2016-01-02
+15|abt|23342343|2016-01-02
+
+
+
+
+
+
+
+hive> create table ext_tab ( id int, name string, salary int, date_today date ) partitioned by ( creation_date date) row format delimited fields terminated by '|' ; 
+hive>  load data local inpath '/home/hadoop/a/file1.txt'  into table ext_tab partition (creation_date="2016-01-01");
+hive> load data local inpath '/home/hadoop/a/file2.txt'  into table ext_tab partition (creation_date="2016-01-02"); 
+n
+=== emp ===
+
+
+create table dyn_emp( id int, fname string,lname string,email string,  gender string, address string, salary int, dept string ) partitioned by (dept_dy string) row format delimited fields terminated by '|' ;
+
+
+insert into table dyn_emp partition(dept_dy) select id, fname,lname,email,gender,address,salary, dept, dept as dyn_emp from  emp;
+
+
+###insert into table tab_test partition(name_par) select id, name, salary, date_today, name as name_par from ext_tab;
+
+#partiiton in backbone of hive and it is vary important in company
+#TODO multiple partiiton  on Year month and date
+
+
+
+================================================
+================================================
+
+29-10-2017
+================================================
+
+objective crate a user define function 
+
+1 cretae ajava program 
+ 1.1. crate a jar file for that program for hive.
+
+now add above newaly crate ajar file inot hive system 
+
+  hive> add jar /home/hadoop/Desktop/mykm.jar;
+
+   create a temporary folder 
+ hive>  create temporary function sample as 'My_KM'   // while My_KM is class file in jar file with i have addedd 
+    // note $ jar -tf bac.jar file display all classname 
+
+hive>  select km(name) from office limit 10  //  kn is user define custom function which we have with java jar file.
+
+
+
+==============
+
+custom data type
+
+
+=======
+File - data_array.txt
+
+1,abc,4000,a$b$c,hyd  
+2,dgc,3484,d$f,bang
+3,ght,4354,h$g$d,lukcnow
+4,hjt,9876,k$i$u,delhi
+
+
+
+hive> create table apple_array(id int,name string, sal bigint, sub array<string>, city string) 
+row  format delimited fields terminated by ','
+collection items terminated by '$';
+
+hive> load data local INPATH '/home/hadoop/Documents/hadoop-training/example_data_file/data_array.txt' into table apple_array;
+
+hive> select * from apple_array;
+OK
+1	abc	4000	["a","b","c"]	hyd  
+2	dgc	3484	["d","f"]	bang
+3	ght	4354	["h","g","d"]	lukcnow
+4	hjt	9876	["k","i","u"]	delhi
+Time taken: 0.183 seconds, Fetched: 4 row(s)
+
+hive> select sub[2] from apple_array;
+OK
+c
+NULL
+d
+u
+Time taken: 19.651 seconds, Fetched: 4 row(s)
+
+====================
+
+Map data type array 
+
+=======================
+apppl_map.txt
+1,abc,4000,pf#699$epf:600,hyd  
+2,dgc,3484,pf#699$epf:700,bang
+3,ght,4354,epf:600,lukcnow
+4,hjt,9876,pf#562,delhi
+
+hive> create table apple_map (id int, name string,sal bigint, dud map <string,int>,city string)
+row format delimited fields terminated by ','
+collection items terminated by '$'
+map keys terminated by '#';
+
+hive> load data local INPATH '/home/hadoop/Documents/hadoop-training/example_data_file/apple_map.txt' into table apple_map;
+
+
+hive> select * from apple_map;                                                                                             
+OK
+1	abc	4000	{"pf":699,"epf":600}	hyd  
+2	dgc	3484	{"pf":699,"epf":700}	bang
+3	ght	4354	{"epf":600}	lukcnow
+4	hjt	9876	{"pf":562}	delhi
+
+hive> select * from apple_map;                                                                                             
+OK
+1	abc	4000	{"pf":699,"epf":600}	hyd  
+2	dgc	3484	{"pf":699,"epf":700}	bang
+3	ght	4354	{"epf":600}	lukcnow
+4	hjt	9876	{"pf":562}	delhi
+
+hive> select dud["pf"] from apple_map;
+Total MapReduce CPU Time Spent: 1 seconds 440 msec
+OK
+699
+699
+NULL
+562
+Time taken: 28.738 seconds, Fetched: 4 row(s)
+
+
+=============================
+struct data type 
+============================
+apple_struct
+
+1,abc,4000,pf#699$epf#600,ap$hyd$500002
+2,dgc,3484,pf#699$epf#700,kar$bang$50000763 
+3,ght,4354,epf#600,utterpredesh$lucknow$500763
+4,hjt,9876,pf#562,delhi$delhi$506232
+
+
+hive>create  table apple_struct (id int, name string,sal bigint,dud map<string,int>, addr struct<state:string,city:string,pincode:int>)
+row format delimited fields terminated by ','
+collection items terminated by '$'
+map keys terminated by '#';
+
+
+hive> load data local INPATH '/home/hadoop/Documents/hadoop-training/example_data_file/apple_struct.txt' into table apple_struct;
+
+hive> select * from apple_struct;
+OK
+1	abc	4000	{"pf":699,"epf":600}	{"state":"ap","city":"hyd","pincode":500002}
+2	dgc	3484	{"pf":699,"epf":700}	{"state":"kar","city":"bang","pincode":null}
+3	ght	4354	{"epf":600}	{"state":"utterpredesh","city":"lucknow","pincode":500763}
+4	hjt	9876	{"pf":562}	{"state":"delhi","city":"delhi","pincode":506232}
+Time taken: 0.404 seconds, Fetched: 4 row(s)
+
+hive> select addr.city from apple_struct;
+Total MapReduce CPU Time Spent: 1 seconds 70 msec
+OK
+hyd
+bang
+lucknow
+delhi
+Time taken: 32.515 seconds, Fetched: 4 row(s)
+
+==========================================
+
+
+create table customer(id int, name string, age int, address string, sal string) row format delimited fields terminated by '|'
+
+
+hive> load data local INPATH '/home/hadoop/Documents/hadoop-training/example_data_file/customer.txt' into tables customer;
+
+===== create order table
+
+hive> create table orders (id int, order_date date,cust_id int,amount double) row format delimited fields  terminated by '|';
+hive>create data local INPATH '/home/hadoop/Documents/hadoop-training/example_data_file/customer.txt' in to table orders;
+======= changes column schenma ========
+hive> alter table orders change order_date order_date timestamp;
+hive> SELECT c.id, c.name, c.age, o.amount FROM CUSTOMER c JOIN ORDERs o ON (c.id = o.cust_id);
+hive> SELECT c.id, c.name, o.amount, o.order_date FROM CUSTOMER c  LEFT OUTER JOIN ORDERS o ON (c.id = o.cust_id);
+
+hive > SELECT c.id, c.name, o.amount, o.order_date FROM CUSTOMER c RIGHT OUTER JOIN ORDERS o ON (c.id = o.cust_id);
+
+hive>  SELECT c.id, c.name, o.amount, o.order_date  FROM CUSTOMER c FULL OUTER JOIN ORDERS o ON (c.id = o.cust_id);
+
+======== cretae a new view  ==========
+
+
+=======================
+31-OCT-2017
+=======================
+
+crate a mkdir in hive  static_ext_p
+cretae two sub directrory in static_ext_p  1.  creation_date=2016-01-01 
+   1.  creation_date=2016-01-02
+
+copy file in above directory create an table with external loction
+
+hadoop fs -put  /home/hadoop/Documents/hadoop-training/example_data_file/date1.txt  /user/hadoop/static_ext_p/creation_date=2016-01-01/
+
+hadoop fs -put  /home/hadoop/Documents/hadoop-training/example_data_file/date2.txt  /user/hadoop/static_ext_p/creation_date=2016-01-02/
+
+create external table static_external ( id int, name string, salary int, date_today date ) partitioned by ( creation_date date) row format delimited fields terminated by '|' location '/user/hadoop/static_ext_p/';
+
+now  excute query ===
+
+hive> select * from static_external;
+  --- no result found because pertion is not created;
+
+now create partion  with alter table;
+
+hive> alter table static_external add partition(creation_date="2016-01-01"); 
+
+hive> select * from static_external;
+   // return some data now add 
+   add some other partion by alter table 
+hive> alter table static_external add partition(creation_date="2016-01-02");
+
+
+
+
+
+
+
+
+
+
+
